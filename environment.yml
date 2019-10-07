@@ -1,4 +1,4 @@
-name: dadi-opt
+name: dadi-env
 channels:
   - bioconda
   - defaults
@@ -72,7 +72,6 @@ dependencies:
   - wheel=0.33.4=py37_0
   - xz=5.2.4=h14c3975_4
   - zlib=1.2.11=h7b6447c_3
-  - pip:
-    - dadi==2.0.3
-prefix: /home/paulblischak/miniconda3/envs/dadi-opt
+  - dadi==2.0.3
+prefix: /home/paulblischak/miniconda3/envs/dadi-env
 
