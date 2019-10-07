@@ -5,7 +5,7 @@ df2 <- data.frame(F=as.factor(df$Fis),Frequency=df$X,Expectation=df$Y)
 
 p <- df2 %>% ggplot(aes(Frequency,Expectation,group=F,color=F)) + 
   geom_line(size=0.8,alpha=0.6) +
-  geom_point(size=3) +
+  geom_point(size=4) +
   theme_bw(base_size = 24) +
   ggtitle("Example Spectra with Inbreeding")
 
