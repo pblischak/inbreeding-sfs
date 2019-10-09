@@ -3,6 +3,109 @@
 import dadi
 import matplotlib.pyplot as plt
 
+import matplotlib
+import pylab
+import numpy
+
+#: Custom ticks that label only the lowest and highest bins in an FS plot.
+class _sfsTickLocator(matplotlib.ticker.Locator):
+    def __call__(self):
+        'Return the locations of the ticks'
+
+        try:
+            vmin, vmax = self.axis.get_view_interval()
+            dmin, dmax = self.axis.get_data_interval()
+        except AttributeError:
+            self.verify_intervals()
+            vmin, vmax = self.viewInterval.get_bounds()
+            dmin, dmax = self.dataInterval.get_bounds()
+
+        tmin = max(vmin, dmin)
+        tmax = min(vmax, dmax)
+
+        return numpy.array([round(tmin)+0.5, round(tmax)-0.5])
+#: Custom tick formatter
+_ctf = matplotlib.ticker.FuncFormatter(lambda x,pos: '%i' % (x-0.4))
+
+
+from dadi import Numerics, Inference
+
+def plot_1d_comp_multinom(model, data, fig_num=None, residual='Anscombe',
+                          plot_masked=False):
+    """
+    Mulitnomial comparison between 1d model and data.
+
+
+    model: 1-dimensional model SFS
+    data: 1-dimensional data SFS
+    fig_num: Clear and use figure fig_num for display. If None, an new figure
+             window is created.
+    residual: 'Anscombe' for Anscombe residuals, which are more normally
+              distributed for Poisson sampling. 'linear' for the linear
+              residuals, which can be less biased.
+    plot_masked: Additionally plots (in open circles) results for points in the 
+                 model or data that were masked.
+
+    This comparison is multinomial in that it rescales the model to optimally
+    fit the data.
+    """
+    model = Inference.optimally_scaled_sfs(model, data)
+
+    plot_1d_comp_Poisson(model, data, fig_num, residual,
+                         plot_masked)
+
+def plot_1d_comp_Poisson(model, data, fig_num=None, residual='Anscombe',
+                         plot_masked=False, show=True):
+    """
+    Poisson comparison between 1d model and data.
+
+
+    model: 1-dimensional model SFS
+    data: 1-dimensional data SFS
+    fig_num: Clear and use figure fig_num for display. If None, an new figure
+             window is created.
+    residual: 'Anscombe' for Anscombe residuals, which are more normally
+              distributed for Poisson sampling. 'linear' for the linear
+              residuals, which can be less biased.
+    plot_masked: Additionally plots (in open circles) results for points in the 
+                 model or data that were masked.
+    show: If True, execute pylab.show command to make sure plot displays.
+    """
+    if fig_num is None:
+        f = pylab.gcf()
+    else:
+        f = pylab.figure(fig_num, figsize=(7,7))
+    pylab.clf()
+
+    if data.folded and not model.folded:
+        model = model.fold()
+
+    masked_model, masked_data = Numerics.intersect_masks(model, data)
+
+    ax = pylab.subplot(2,1,1)
+    pylab.semilogy(masked_data, '-ob')
+    pylab.semilogy(masked_model, '-or')
+
+    if plot_masked:
+        pylab.semilogy(masked_data.data, '--ob', mfc='w', zorder=-100)
+        pylab.semilogy(masked_model.data, '--or', mfc='w', zorder=-100)
+
+    pylab.subplot(2,1,2, sharex = ax)
+    if residual == 'Anscombe':
+        resid = Inference.Anscombe_Poisson_residual(masked_model, masked_data)
+    elif residual == 'linear':
+        resid = Inference.linear_Poisson_residual(masked_model, masked_data)
+    else:
+        raise ValueError("Unknown class of residual '%s'." % residual)
+    pylab.plot(resid, '-og')
+    pylab.ylim(-175,115)
+    if plot_masked:
+        pylab.plot(resid.data, '--og', mfc='w', zorder=-100)
+
+    ax.set_xlim(0, data.shape[0]-1)
+    if show:
+        pylab.show()
+
 def bottlegrowth(params, ns, pts):
     nuBot,nuCur,T,F = params
 
@@ -76,10 +179,12 @@ if __name__ == "__main__":
     model_noF = func2_ex(popt_noF, data.sample_sizes, pts_l)
     model_noF = model_noF.fold()
 
-    dadi.Plotting.plot_1d_comp_multinom(model,data)
+    #dadi.Plotting.plot_1d_comp_multinom(model,data)
+    plot_1d_comp_multinom(model,data)
     #plt.savefig("puma_fit.pdf")
     #plt.close()
 
-    dadi.Plotting.plot_1d_comp_multinom(model_noF, data)
+    #dadi.Plotting.plot_1d_comp_multinom(model_noF, data)
+    plot_1d_comp_multinom(model_noF, data)
     #plt.savefig("puma_fit_noF.pdf")
     #plt.close()
