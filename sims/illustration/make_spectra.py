@@ -36,13 +36,17 @@ if __name__ == "__main__":
     func_ex = dadi.Numerics.make_extrap_log_func(func)
     fs_F00 = func_ex([1e-6], [50], pts_l)
     fs_F10 = func_ex([0.1], [50], pts_l)
+    fs_F25 = func_ex([0.25], [50], pts_l)
     fs_F50 = func_ex([0.5], [50], pts_l)
-    fs_F80 = func_ex([0.8], [50], pts_l)
+    fs_F75 = func_ex([0.75], [50], pts_l)
+    fs_F90 = func_ex([0.9], [50], pts_l)
 
     with open("spectra.csv", "w") as f_out:  
         print("Fis","X","Y", sep=",", file=f_out)
         for i in range(1,50):
             print("0.0",i,fs_F00[i], sep=",", file=f_out)
             print("0.1",i,fs_F10[i], sep=",", file=f_out)
+            print("0.25",i,fs_F25[i], sep=",", file=f_out)
             print("0.5",i,fs_F50[i], sep=",", file=f_out)
-            print("0.8",i,fs_F80[i], sep=",", file=f_out)
+            print("0.75",i,fs_F75[i], sep=",", file=f_out)
+            print("0.9",i,fs_F90[i], sep=",", file=f_out)
