@@ -83,7 +83,8 @@ server <- function(input, output, session){
   output$hist <- renderPlot({
     pmf <- betaBinomConv_pmf(input$n,input$p,input$fis)
     plot(0:(2*input$n), pmf, type='h', lwd=5, ylim=c(0,max(pmf)+0.05),
-         xlab = "Derived alleles", ylab="Probability", main="Beta-Binomial PMF")
+         xlab = "Derived alleles", ylab="Probability",
+         main="Beta-Binomial Convolution PMF")
   })
 }
 
