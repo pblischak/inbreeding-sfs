@@ -15,6 +15,12 @@ The `data/` folder contains two example data sets (cabbage and puma), as well as
 scripts for fitting demographic models, estimating parameter uncertainties, and plotting
 comparisons between the observed and expected SFS.
 
+### `bbc-shiny/`
+
+The `bbc-shiny/` folder contains R code for a small Shiny application to demonstrate the
+properties of the beta-binomial convolution that is used to derive the expected SFS with
+inbreeding.
+
 #### Setup
 
 These analyses can be recreated using the latest version of ∂a∂i (v2.0.3). 

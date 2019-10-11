@@ -3,6 +3,8 @@ library(tidyverse)
 library(partitions)
 
 lmultichoose <- function(x){
+  # Returns the log of the multinomial
+  # coefficient for a vector of integers.
   n <- sum(x)
   denom <- 0
   for(i in x){
@@ -12,6 +14,8 @@ lmultichoose <- function(x){
 }
 
 lbetaBinom <- function(i,p,Fis){
+  # Returns the log of the pmf of the beta-binomial
+  # distribution.
   if(p == 0){
     p <- 1e-8
   } else if(p == 1){
@@ -29,6 +33,8 @@ lbetaBinom <- function(i,p,Fis){
 }
 
 calc_prt <- function(prt,p,Fis){
+  # Calculates the joint probability of sampling the genotypes
+  # in a single partition.
   n0 <- sum(prt==0)
   n1 <- sum(prt==1)
   n2 <- sum(prt==2)
@@ -40,6 +46,9 @@ calc_prt <- function(prt,p,Fis){
 }
 
 betaBinomConv_pmf <- function(n,p,Fis){
+  # This is the main function for the n-fold convolution
+  # of beta-binomials. It calculates the full pmf for a sample
+  # size of n, allele frequency p, and inbreeding coefficient Fis.
   pmf <- rep(NA,2*n + 1)
   z0 <- rep(0,n)
   z1 <- z0
@@ -60,6 +69,9 @@ betaBinomConv_pmf <- function(n,p,Fis){
   }
   return(pmf)
 }
+
+
+# Everything after this is just setup for the Shiny app interface.
 
 ui <- fluidPage(
   theme = shinythemes::shinytheme("darkly"),
