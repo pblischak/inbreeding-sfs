@@ -7,6 +7,12 @@ f0.4 <- readr::read_csv("2D_model1_0.4.out")
 f0.5  <- readr::read_csv("2D_model1_0.5.out")
 
 df <- rbind(f0.1, f0.2, f0.3, f0.4, f0.5)
+cat("Overall RMSD for Nu2: ", sqrt(mean((df$Nu2_true-df$Nu2_est)^2)), "\n")
+cat("Overall RMSD for T: ", sqrt(mean((df$T_true-df$T_est)^2)), "\n")
+cat("Overall RMSD for M21: ", sqrt(mean((df$M21_true-df$M21_est)^2)), "\n")
+df %>% group_by(F_true,Nu2_true) %>% mutate(Nu2_sq=(Nu2_true-Nu2_est)^2) %>% summarise(rmsd=sqrt(mean(Nu2_sq)))
+df %>% group_by(F_true,T_true) %>% mutate(T_sq=(T_true-T_est)^2) %>% summarise(rmsd=sqrt(mean(T_sq)))
+df %>% group_by(F_true,M21_true) %>% mutate(M21_sq=(M21_true-M21_est)^2) %>% summarise(rmsd=sqrt(mean(M21_sq)))
 
 df %>% ggplot(aes(x=Nu2_true, y=Nu2_est, group=Nu2_true)) +
   geom_boxplot() +

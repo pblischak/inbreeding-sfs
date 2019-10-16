@@ -15,6 +15,11 @@ cat(sum(df$T_est < 2.5))
 # not converging. It only removes 16 estimates.
 df <- df[df$T_est < 2.5,]
 
+cat("Overall RMSD for Nu0: ", sqrt(mean((df$Nu0_true-df$Nu0_est)^2)), "\n")
+cat("Overall RMSD for T: ", sqrt(mean((df$T_true-df$T_est)^2)), "\n")
+df %>% group_by(F_true,Nu0_true) %>% mutate(Nu0_sq=(Nu0_true-Nu0_est)^2) %>% summarise(rmsd=sqrt(mean(Nu0_sq)))
+df %>% group_by(F_true,T_true) %>% mutate(T_sq=(T_true-T_est)^2) %>% summarise(rmsd=sqrt(mean(T_sq)))
+
 df %>% ggplot(aes(x=Nu0_true, y=Nu0_est, group=Nu0_true)) +
   geom_boxplot() +
   geom_jitter(shape=16, position=position_jitter(0.02), alpha=0.6) +
