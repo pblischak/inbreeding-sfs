@@ -1,6 +1,10 @@
 library(tidyverse)
 
 df <- readr::read_csv("2D_model1_0.5.out")
+cat("Mean for F: ", mean(df$F_est), "\n")
+cat("Overall RMSD for Nu2: ", sqrt(mean((df$Nu2_true-df$Nu2_est)^2)), "\n")
+cat("Overall RMSD for T: ", sqrt(mean((df$T_true-df$T_est)^2)), "\n")
+cat("Overall RMSD for M21: ", sqrt(mean((df$M21_true-df$M21_est)^2)), "\n")
 
 df %>% ggplot(aes(F_est)) +
   geom_density(fill="gray40", color="white") +
