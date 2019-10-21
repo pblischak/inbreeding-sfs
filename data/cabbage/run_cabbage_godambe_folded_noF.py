@@ -57,7 +57,8 @@ if __name__ == '__main__':
 
     # Set conversion parameters
     theta = 459187.876565839 # estimated from model
-    L = 554977060 # Sequence length
+    #L = 554977060 # Sequence length
+    L = 411560319 # Sequence length
     mu = 1.5e-8
     g  = 1 # generation time
     Nref = theta / L / mu / g / 4
@@ -67,9 +68,9 @@ if __name__ == '__main__':
     print("  Mutation rate =   {}".format(mu))
     print("  Generation time = {}".format(g))
 
-    print("\nNref = {} (CI: {} -- {})".format(Nref, (theta-uncerts[-1]) / L / mu / g / 4, (theta+uncerts[-1]) / L / mu / g / 4))
-    print("NExp = {} (CI: {} -- {})".format(popt[0]*Nref, (popt[0]-uncerts[0])*Nref, (popt[0]+uncerts[0])*Nref))
-    print("NBot = {} (CI: {} -- {})".format(popt[1]*Nref, (popt[1]-uncerts[1])*Nref, (popt[1]+uncerts[1])*Nref))
-    print("NCur = {} (CI: {} -- {})".format(popt[2]*Nref, (popt[2]-uncerts[2])*Nref, (popt[2]+uncerts[2])*Nref))
-    print("T1    = {} (CI: {} -- {})".format(popt[3]*2*Nref, (popt[3]-uncerts[3])*2*Nref, (popt[3]+uncerts[3])*2*Nref))
-    print("T2    = {} (CI: {} -- {})".format(popt[4]*2*Nref, (popt[4]-uncerts[4])*2*Nref, (popt[4]+uncerts[4])*2*Nref))
+    print("\nNref = {} ({} -- {})".format(Nref, (theta-uncerts[-1]) / L / mu / g / 4, (theta+uncerts[-1]) / L / mu / g / 4))
+    print("NExp = {} ({} -- {})".format(popt[0]*Nref, (popt[0]-uncerts[0])*Nref, (popt[0]+uncerts[0])*Nref))
+    print("NBot = {} ({} -- {})".format(popt[1]*Nref, (popt[1]-uncerts[1])*Nref, (popt[1]+uncerts[1])*Nref))
+    print("NCur = {} ({} -- {})".format(popt[2]*Nref, (popt[2]-uncerts[2])*Nref, (popt[2]+uncerts[2])*Nref))
+    print("T1    = {} ({} -- {})".format(popt[3]*2*Nref, (popt[3]-uncerts[3])*2*Nref, (popt[3]+uncerts[3])*2*Nref))
+    print("T2    = {} ({} -- {})".format(popt[4]*2*Nref, (popt[4]-uncerts[4])*2*Nref, (popt[4]+uncerts[4])*2*Nref))
