@@ -58,8 +58,8 @@ if __name__ == '__main__':
     print("  Mutation rate =   {}".format(mu))
     print("  Generation time = {}".format(g))
 
-    print("\nNref = {} ({}--{})".format(Nref, np.exp(np.log(theta)-1.96*uncerts[-1]) / L / mu / g / 4, np.exp(np.log(theta)+1.96*uncerts[-1]) / L / mu / g / 4))
-    print("N1   = {} ({}--{})".format(popt[0]*Nref, np.exp(np.log(popt[0])-1.96*uncerts[0])*Nref, np.exp(np.log(popt[0])+1.96*uncerts[0])*Nref))
-    print("N2   = {} ({}--{})".format(popt[1]*Nref, np.exp(np.log(popt[1])-1.96*uncerts[1])*Nref, np.exp(np.log(popt[1])+1.96*uncerts[1])*Nref))
-    print("T1   = {} ({}--{})".format(popt[2]*2*Nref, np.exp(np.log(popt[2])-1.96*uncerts[2])*2*Nref, np.exp(np.log(popt[2])+1.96*uncerts[2])*2*Nref))
-    print("T2   = {} ({}--{})".format(popt[3]*2*Nref, np.exp(np.log(popt[3])-1.96*uncerts[3])*2*Nref, np.exp(np.log(popt[3])+1.96*uncerts[3])*2*Nref))
+    print("\nNref = {:0.2f} ({:0.2f}--{:0.2f})".format(Nref, np.exp(np.log(theta)-1.96*uncerts[-1]) / L / mu / g / 4, np.exp(np.log(theta)+1.96*uncerts[-1]) / L / mu / g / 4))
+    print("N1   = {:0.2f} ({:0.2f}--{:0.2f})".format(popt[0]*Nref, np.exp(np.log(popt[0])-1.96*uncerts[0])*Nref, np.exp(np.log(popt[0])+1.96*uncerts[0])*Nref))
+    print("N2   = {:0.2f} ({:0.2f}--{:0.2f})".format(popt[1]*Nref, np.exp(np.log(popt[1])-1.96*uncerts[1])*Nref, np.exp(np.log(popt[1])+1.96*uncerts[1])*Nref))
+    print("T1   = {:0.2f} ({:0.2f}--{:0.2f})".format(popt[2]*2*Nref, np.exp(np.log(popt[2])-1.96*uncerts[2])*2*Nref, np.exp(np.log(popt[2])+1.96*uncerts[2])*2*Nref))
+    print("T2   = {:0.2f} ({:0.2f}--{:0.2f})".format(popt[3]*2*Nref, np.exp(np.log(popt[3])-1.96*uncerts[3])*2*Nref, np.exp(np.log(popt[3])+1.96*uncerts[3])*2*Nref))
