@@ -20,8 +20,9 @@ def divergence_noF(params, ns, pts):
 
 
 if __name__ == '__main__':
-    # Read in data
-    data = dadi.Spectrum.from_file("puma.fs")
+    # Read in
+    dd = dadi.Misc.make_data_dict("puma.dadi")
+    data = dadi.Spectrum.from_data_dict(dd, ['Texas','Florida'], [10,4])
     data = data.fold()
     ns = data.sample_sizes
     pts_l = [40,50,60]

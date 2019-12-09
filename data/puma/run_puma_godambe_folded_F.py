@@ -2,6 +2,8 @@
 
 import dadi
 import dadi.Godambe
+from scipy import stats
+import numpy as np
 
 def divergence(params, ns, pts):
     """
@@ -21,18 +23,8 @@ def divergence(params, ns, pts):
 
 
 if __name__ == '__main__':
-    # Make SFS files so we don't have to read in
-    # big data files every time.
-    make_spectra = False # Swith this to False after SFS files have been generated
-    for i in range(100):
-        print(i)
-        if make_spectra:
-            boot_dd = dadi.Misc.make_data_dict("puma_boot{}.dadi".format(i))
-            boot_data = dadi.Spectrum.from_data_dict(boot_dd, ['Texas','Florida'], [10,4])
-            boot_data.to_file("puma_boot{}.fs".format(i))
-
     # Read in the bootstrapped spectra and then fold
-    all_boot = [dadi.Spectrum.from_file("boot/puma_boot{}.fs".format(i)) for i in range(100)]
+    all_boot = [dadi.Spectrum.from_file("boot/puma_test_boot{}.fs".format(i)) for i in range(100)]
     all_boot = [sfs.fold() for sfs in all_boot]
 
     # Now read in the original data set
@@ -44,6 +36,35 @@ if __name__ == '__main__':
 
     func_ex = dadi.Numerics.make_extrap_log_func(func)
 
-    uncerts = dadi.Godambe.GIM_uncert(func_ex, pts_l, all_boot, popt, data,
-                                  multinom=True)
+    uncerts = dadi.Godambe.GIM_uncert(func_ex, pts_l, all_boot, popt, data, log=True, multinom=True)
     print('Estimated parameter standard deviations from GIM: {0}'.format(uncerts))
+
+    llik_F   = -343218.201692238
+    llik_noF = -499397.564085949
+    adj      = dadi.Godambe.LRT_adjust(func_ex, pts_l, all_boot, popt, data, nested_indices=[3,4], multinom=True)
+    D_adj    = 2 * adj * (llik_F - llik_noF)
+    print("\n\nLikelihood ratio test:")
+    print("  No inbreeding likelihood = {}".format(llik_noF))
+    print("  Inbreeding likelihood    = {}".format(llik_F))
+    print("  LRT adjustment           = {}".format(adj))
+    print("  LRT statistic            = {}".format(D_adj))
+    print("  LRT p-value              = {}".format(dadi.Godambe.sum_chi2_ppf(D_adj, (1.0/3.0,1.0/3.0,1.0/3.0))))
+
+    # Set conversion parameters
+    theta = 2307096.160 # estimated from model
+    L = 2564692624
+    mu = 2.2e-9
+    g  = 3 # generation time
+    Nref = theta / L / mu / g / 4
+    print("\n\nConverting parameters to actual units...\n")
+    print("Using the following values for conversion:")
+    print("  Sequence length = {}".format(L))
+    print("  Mutation rate   = {}".format(mu))
+    print("  Generation time = {}".format(g))
+
+    print("\nNref = {} ({}--{})".format(Nref, np.exp(np.log(theta)-1.96*uncerts[-1]) / L / mu / g / 4, np.exp(np.log(theta)+1.96*uncerts[-1]) / L / mu / g / 4))
+    print("N_TX = {} ({}--{})".format(popt[0]*Nref, np.exp(np.log(popt[0])-1.96*uncerts[0])*Nref, np.exp(np.log(popt[0])+1.96*uncerts[0])*Nref))
+    print("N_FL = {} ({}--{})".format(popt[1]*Nref, np.exp(np.log(popt[1])-1.96*uncerts[1])*Nref, np.exp(np.log(popt[1])+1.96*uncerts[1])*Nref))
+    print("T    = {} ({}--{})".format(popt[2]*2*Nref, np.exp(np.log(popt[2])-1.96*uncerts[2])*2*Nref, np.exp(np.log(popt[2])+1.96*uncerts[2])*2*Nref))
+    print("F_TX = {} ({}--{})".format(popt[3], np.exp(np.log(popt[3])-1.96*uncerts[3]), np.exp(np.log(popt[3])+1.96*uncerts[3])))
+    print("F_FL = {} ({}--{})".format(popt[4], np.exp(np.log(popt[4])-1.96*uncerts[4]), np.exp(np.log(popt[4])+1.96*uncerts[4])))
