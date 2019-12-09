@@ -6,30 +6,29 @@ def divergence(params, ns, pts):
     """
     Divergence only model.
     """
-    nuTX,nuFL,T,F1,F2 = params
+    nuTX,nuFL,T1,T2,F1,F2 = params
 
     xx = yy = dadi.Numerics.default_grid(pts)
     n1,n2 = ns[0],ns[1]
 
     phi = dadi.PhiManip.phi_1D(xx)
+    phi = dadi.Integration.one_pop(phi,xx,T1,nu=nuTX)
     phi = dadi.PhiManip.phi_1D_to_2D(xx,phi)
 
-    phi = dadi.Integration.two_pops(phi,xx,T,nu1=nuTX,nu2=nuFL)
+    phi = dadi.Integration.two_pops(phi,xx,T2,nu1=nuTX,nu2=nuFL)
     sfs = dadi.Spectrum.from_phi_inbreeding(phi, (n1,n2), (xx,yy), (F1,F2), (2,2))
     return sfs
 
-
 if __name__ == '__main__':
-    # Read in
-    dd = dadi.Misc.make_data_dict("puma.dadi")
-    data = dadi.Spectrum.from_data_dict(dd, ['Texas','Florida'], [10,4])
+    # Read in data
+    data = dadi.Spectrum.from_file("puma.fs")
     data = data.fold()
     ns = data.sample_sizes
     pts_l = [40,50,60]
     func = divergence
-    upper_bound = [10.0,10.0,10.0,0.9999,0.9999]
-    lower_bound = [1e-2,1e-2,1e-2,0.0001,0.0001]
-    p0 = [1.0,1.0,1.0,0.1,0.1]
+    upper_bound = [10.0,10.0,10.0,10.0,0.9999,0.9999]
+    lower_bound = [1e-2,1e-2,1e-2,1e-2,0.0001,0.0001]
+    p0 = [1.0,1.0,0.5,0.5,0.5,0.5]
 
     func_ex = dadi.Numerics.make_extrap_log_func(func)
 
@@ -43,7 +42,7 @@ if __name__ == '__main__':
     ll_model = dadi.Inference.ll_multinom(model, data)
     theta = dadi.Inference.optimal_sfs_scaling(model, data)
 
-    with open("puma_fits_folded.csv", 'a') as f:
+    with open("puma_fits_folded2.csv", 'a') as f:
         for p in popt:
             print("{},".format(p), sep='',end='', file=f)
         print(ll_model,theta, sep=",", file=f)

@@ -287,7 +287,7 @@ def plot_2d_comp_Poisson(model, data, vmin=None, vmax=None,
     ax = pylab.subplot(2,2,4)
     flatresid = numpy.compress(numpy.logical_not(resid.mask.ravel()),
                                resid.ravel())
-    ax.hist(flatresid, bins=30, density=True)
+    ax.hist(flatresid, bins=20, density=True)
     ax.set_title('residuals')
     ax.set_yticks([])
     if show:
@@ -343,10 +343,12 @@ if __name__ == "__main__":
     model_noF = model_noF.fold()
 
 
-    plot_2d_comp_multinom(model,data, fig_num=1, resid_range=475)
+    plot_2d_comp_multinom(model,data, fig_num=1, resid_range=450)
+    #plot_2d_comp_multinom(model,data, fig_num=1, resid_range=475)
     #plt.savefig("puma_fit.pdf")
     #plt.close()
 
-    plot_2d_comp_multinom(model_noF, data, fig_num=2, resid_range=475)
+    plot_2d_comp_multinom(model_noF, data, fig_num=2, resid_range=450)
+    #plot_2d_comp_multinom(model_noF, data, fig_num=2, resid_range=475)
     #plt.savefig("puma_fit_noF.pdf")
     #plt.close()
