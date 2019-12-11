@@ -1,0 +1,46 @@
+// set up a bottleneck+growth simulation
+// theta (4 * Na * mu * L) = 10^4 
+// L = 10^6 Mb
+// Na = 10^3
+// mu = 10,000 / (4 * 10^3 * 10^6) = 1 / 4e5
+
+// the bottlenecked population size will be 250
+// it will be given 0.4*Na generations to recover back to 1000 individuals
+
+initialize() {
+	setwd("/data/pblischak/manuscripts/inbreeding-sfs/sims/slim/bottleneck");
+	
+	//defineConstant("Fis", 0.1); // set F
+	initializeMutationRate(2.5e-6);
+	
+	// m1 mutation type: neutral
+	initializeMutationType("m1", 0.5, "f", 0.0);
+	
+	// g1 genomic element type: uses m1 for all mutations
+	initializeGenomicElementType("g1", m1, 1.0);
+	
+	// uniform chromosome of length 100 kb with uniform recombination
+	initializeGenomicElement(g1, 0, 999999);
+	initializeRecombinationRate(2.5e-6);
+}
+
+1 {
+	sim.addSubpop("p1", 1000);
+	
+	// selfingRate = 2 * Fis / (1 + Fis)
+	p1.setSelfingRate(2 * asFloat(Fis) / (1 + asFloat(Fis)));
+}
+
+// after 10*Na = 10000 generation of burn-in, start the bottleneck+growth
+10000:10400 {
+	newSize = asInteger(250 * (1000 / 250) ^ ((sim.generation-10000)/400));
+	p1.setSubpopulationSize(newSize);
+}
+
+10400 late() {
+	for(i in 1:100){
+		print("Sampling VCF file " + i + "...");
+		p1.outputVCFSample(25, replace=T, outputMultiallelics=F,
+			filePath = "SLiM_F" + Fis + "_bottleneck_rep" + Rep + "_" + i + ".vcf");
+	}
+}

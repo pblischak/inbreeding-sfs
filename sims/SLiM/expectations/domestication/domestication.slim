@@ -1,0 +1,47 @@
+// set up a simple neutral simulation
+// theta (4 * Na * mu * L) = 10^4 
+// L = 10^6 Mb
+// Na = 10^3
+// mu = 10,000 / (4 * 10^3 * 10^6) = 1 / 4e5
+initialize() {
+	setwd("/home/pblischak/slim-inbreeding/domestication");
+	
+	//defineConstant("Fis", 0.1); // set F
+	initializeMutationRate(2.5e-6);
+	
+	// m1 mutation type: neutral
+	initializeMutationType("m1", 0.5, "f", 0.0);
+	
+	// g1 genomic element type: uses m1 for all mutations
+	initializeGenomicElementType("g1", m1, 1.0);
+	
+	// uniform chromosome of length 100 kb with uniform recombination
+	initializeGenomicElement(g1, 0, 999999);
+	initializeRecombinationRate(2.5e-6);
+}
+
+// create a population of 500 individuals
+1 {
+	sim.addSubpop("p1", 1000);
+}
+
+// Selfing domesticated population splits after burn-in
+// Migration occurs at a rate of (2 * M21 * Na)
+// Start inbreeding after burn-in
+10000 {
+	// selfingRate = 2 * Fis / (1 + Fis)
+	sim.addSubpopSplit("p2", 250, p1);
+	p2.setSelfingRate(2 * asFloat(Fis) / (1 + asFloat(Fis)));
+	p2.setMigrationRates(p1,1/2000);
+}
+
+// Allow 2 * T * Na generation of inbreeding
+10400 late() {
+	for(i in 1:100){
+		print("Sampling VCF file " + i + "...");
+		p1.outputVCFSample(25, replace=T, outputMultiallelics=F,
+			filePath = "SLiM_F" + Fis + "_domestication_pop1_T0.2_M0.1_rep" + Rep + "_"+ i + ".vcf");
+		p2.outputVCFSample(25, replace=T, outputMultiallelics=F,
+			filePath = "SLiM_F" + Fis + "_domestication_pop2_T0.2_M0.1_rep" + Rep + "_"+ i + ".vcf");
+	}
+}
