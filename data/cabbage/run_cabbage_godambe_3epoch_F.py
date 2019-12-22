@@ -3,9 +3,8 @@
 import dadi
 import dadi.Godambe
 import numpy as np
-from sys import exit
 
-def three_epoch_noF(params, ns, pts):
+def three_epoch(params, ns, pts):
     """
     params = (nuB,nuF,TB,TF)
     ns = (n1,)
@@ -18,7 +17,7 @@ def three_epoch_noF(params, ns, pts):
     n1: Number of samples in resulting Spectrum
     pts: Number of grid points to use in integration.
     """
-    nuB,nuF,TB,TF = params
+    nuB,nuF,TB,TF,F = params
 
     xx = dadi.Numerics.default_grid(pts)
     phi = dadi.PhiManip.phi_1D(xx)
@@ -26,7 +25,7 @@ def three_epoch_noF(params, ns, pts):
     phi = dadi.Integration.one_pop(phi, xx, TB, nuB)
     phi = dadi.Integration.one_pop(phi, xx, TF, nuF)
 
-    fs = dadi.Spectrum.from_phi(phi, ns, (xx,))
+    fs = dadi.Spectrum.from_phi_inbreeding(phi, ns, (xx,), (F,), (2,))
     return fs
 
 if __name__ == '__main__':
@@ -38,8 +37,8 @@ if __name__ == '__main__':
     data = dadi.Spectrum.from_file("cabbage.fs")
     data = data.fold()
     pts_l = [100,110,120]
-    func = three_epoch_noF
-    popt = [6.4524615672350958,0.0309347139612217,0.153264805381591,0.00100000000000000]
+    func = three_epoch
+    popt = [1.810449088130342,12.2790194725467110,0.47393521119534737,0.00921096365957015,0.577870722504928]
 
     func_ex = dadi.Numerics.make_extrap_log_func(func)
 
@@ -60,8 +59,19 @@ if __name__ == '__main__':
     uncerts,GIM = dadi.Godambe.GIM_uncert(func_ex, pts_l, all_boot, popt, data, log=True, multinom=True, return_GIM=True, eps=eps)
     vcov = np.linalg.inv(GIM)
 
+    llik_F   = -4281.14456624734
+    llik_noF = -24330.4027006874
+    adj      = dadi.Godambe.LRT_adjust(func_ex, pts_l, all_boot, popt, data, nested_indices=[4], multinom=True)
+    D_adj    = 2 * adj * (llik_F - llik_noF)
+    print("\n\nLikelihood ratio test:")
+    print("  No inbreeding likelihood = {}".format(llik_noF))
+    print("  Inbreeding likelihood    = {}".format(llik_F))
+    print("  LRT adjustment           = {}".format(adj))
+    print("  LRT statistic            = {}".format(D_adj))
+    print("  LRT p-value              = {}".format(dadi.Godambe.sum_chi2_ppf(D_adj, (0.5,0.5))))
+
     # Set conversion parameters
-    theta = 472576.2690794509 # estimated from model
+    theta = 431524.124873428 # estimated from model
     L = 411560319
     mu = 1.5e-8
     g  = 1 # generation time
@@ -70,15 +80,18 @@ if __name__ == '__main__':
     print("\n\nConverting parameters to actual units (eps={})...\n".format(eps))
     print("Using the following values for conversion:")
     print("  Sequence length = {}".format(L))
-    print("  Mutation rate =   {}".format(mu))
+    print("  Mutation rate   = {}".format(mu))
     print("  Generation time = {}".format(g))
     print("")
 
+    # Do conversions here for propogation of uncertainty
+    # (ie, we're multiplying everything by theta, which is also estimated).
     uncerts2 = [
         np.sqrt(vcov[-1,-1] + vcov[0,0] + 2*vcov[0,-1]),
         np.sqrt(vcov[-1,-1] + vcov[1,1] + 2*vcov[1,-1]),
         np.sqrt(vcov[-1,-1] + vcov[2,2] + 2*vcov[2,-1]),
         np.sqrt(vcov[-1,-1] + vcov[3,3] + 2*vcov[3,-1]),
+        uncerts[4],
         uncerts[-1]
     ]
     
@@ -102,3 +115,4 @@ if __name__ == '__main__':
     print("N2   = {} ({}--{})".format(popt[1]*Nref, np.exp(log_params[1]-1.96*uncerts2[1]), np.exp(log_params[1]+1.96*uncerts2[1])))
     print("T1   = {} ({}--{})".format(popt[2]*2*g*Nref, np.exp(log_params[2]-1.96*uncerts2[2]), np.exp(log_params[2]+1.96*uncerts2[2])))
     print("T2   = {} ({}--{})".format(popt[3]*2*g*Nref, np.exp(log_params[3]-1.96*uncerts2[3]), np.exp(log_params[3]+1.96*uncerts2[3])))
+    print("F    = {} ({}--{})".format(popt[4], np.exp(np.log(popt[4])-1.96*uncerts2[4]), np.exp(np.log(popt[4])+1.96*uncerts2[4])))
