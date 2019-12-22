@@ -34,11 +34,11 @@ df %>% ggplot(aes(x=F_true, y=F_est, group=F_true)) +
   geom_boxplot() +
   geom_jitter(shape=16, position=position_jitter(0.02), alpha=0.6) +
   geom_abline(intercept=0, slope=1, linetype="dashed", color="red", size=0.5) +
-  theme_bw(base_size = 20) +
+  theme_bw(base_size = 24) +
   #facet_grid(Nu0_true ~ T_true) +
-  ggtitle("Inbreeding Coefficient (Model 2: Bottle-Growth Model)")
+  ggtitle("Inbreeding (Bottleneck+Growth)")
 
-ggsave("bottleneck_F_2.pdf", units = "in", width=12, height=10)
+ggsave("bottleneck_F_2.svg", units = "in", width=10, height=8)
 
 df %>% ggplot(aes(x=F_true, y=Nu0_est, group=F_true)) +
   geom_boxplot() +

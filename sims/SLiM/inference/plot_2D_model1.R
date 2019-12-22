@@ -39,10 +39,10 @@ df %>% ggplot(aes(x=F_true, y=F_est, group=F_true)) +
   geom_boxplot() +
   geom_jitter(shape=16, position=position_jitter(0.02), alpha=0.6) +
   geom_abline(intercept=0, slope=1, linetype="dashed", color="red", size=0.5) +
-  theme_bw(base_size = 20) +
-  ggtitle("Inbreeding Coefficient (Model 3: Divergence + One-Way Migration)")
+  theme_bw(base_size = 24) +
+  ggtitle("Inbreeding (Divergence+One-Way Migration)")
 
-ggsave("domestication_F.pdf", units = "in", width=12, height=10)
+ggsave("domestication_F.svg", units = "in", width=10, height=8)
 
 df %>% ggplot(aes(x=F_true, y=Nu2_est * (1 + F_est), group=F_true)) +
   geom_boxplot() +

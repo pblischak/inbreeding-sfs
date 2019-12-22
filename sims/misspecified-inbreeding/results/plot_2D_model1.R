@@ -10,7 +10,7 @@ df %>% ggplot(aes(F_est)) +
   geom_density(fill="gray40", color="white") +
   #geom_jitter(shape=16, position=position_jitter(0.02), alpha=0.6) +
   geom_vline(xintercept=0, linetype="dashed", color="red", size=0.5) +
-  theme_bw() +
+  theme_bw(base_size = 20) +
   facet_grid(Nu2_true ~ T_true) +
   xlim(c(0,1)) +
   ggtitle("Inbreeding Coefficient")
@@ -21,7 +21,7 @@ df %>% ggplot(aes(x=Nu2_true, y=Nu2_est, group=Nu2_true)) +
   geom_boxplot() +
   geom_jitter(shape=16, position=position_jitter(0.02), alpha=0.6) +
   geom_abline(intercept=0, slope=1, linetype="dashed", color="red", size=0.5) +
-  theme_bw() +
+  theme_bw(base_size = 20) +
   facet_grid(T_true ~ M21_true) +
   ggtitle("Pop 2 Size")
 
@@ -31,7 +31,7 @@ df %>% ggplot(aes(x=T_true, y=T_est, group=T_true)) +
   geom_boxplot() +
   geom_jitter(shape=16, position=position_jitter(0.02), alpha=0.6) +
   geom_abline(intercept=0, slope=1, linetype="dashed", color="red", size=0.5) +
-  theme_bw() +
+  theme_bw(base_size = 20) +
   facet_grid(Nu2_true ~ M21_true) +
   ggtitle("Pop 2 Divergence")
 
@@ -41,7 +41,7 @@ df %>% ggplot(aes(x=M21_true, y=M21_est, group=M21_true)) +
   geom_boxplot() +
   geom_jitter(shape=16, position=position_jitter(0.02), alpha=0.6) +
   geom_abline(intercept=0, slope=1, linetype="dashed", color="red", size=0.5) +
-  theme_bw() +
+  theme_bw(base_size = 20) +
   facet_grid(Nu2_true ~ T_true) +
   ggtitle("Migration (M_21)")
 
