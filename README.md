@@ -4,6 +4,12 @@ This repository contains code, data, and results for all simulations and empiric
 data analyses conducted in the manuscript *Inferring the Demographic History of
 Inbred Species From Genome-Wide SNP Frequency Data*.
 
+**Preprint**:
+
+Blischak, P. D., M. S. Barker, and R. N. Gutenkunst. 2019. Inferring the Demographic History of
+Inbred Species From Genome-Wide SNP Frequency Data.
+bioRxiv [10.1101/2019.12.20.881474](https://doi.org/10.1101/2019.12.20.881474).
+
 ### `sims/`
 
 The `sims/` folder contains code for performing the four main simulation experiments that

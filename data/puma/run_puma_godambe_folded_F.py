@@ -23,7 +23,7 @@ def divergence(params, ns, pts):
 
 if __name__ == '__main__':
     # Read in the bootstrapped spectra and then fold
-    all_boot = [dadi.Spectrum.from_file("puma_test2_boot{}.fs".format(i)) for i in range(100)]
+    all_boot = [dadi.Spectrum.from_file("boot/puma_test2_boot{}.fs".format(i)) for i in range(100)]
     all_boot = [sfs.fold() for sfs in all_boot]
 
     # Now read in the original data set
